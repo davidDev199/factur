@@ -14,8 +14,8 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::factory()->create([
-            'name' => 'Victor Arana',
-            'email' => 'demo@codersfree.com',
+            'name' => 'Admin Dargui',
+            'email' => 'admin@dargui.com',
             'password' => bcrypt('12345678')
         ]);
     }
