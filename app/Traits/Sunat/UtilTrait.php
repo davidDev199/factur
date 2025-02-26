@@ -26,8 +26,8 @@ trait UtilTrait
         $see->setService($endpoint);
 
         $see->setClaveSOL(
-            $this->company->ruc, 
-            $this->company->sol_user, 
+            $this->company->ruc,
+            $this->company->sol_user,
             $this->company->sol_pass
         );
 
@@ -45,18 +45,18 @@ trait UtilTrait
         ]);
 
         return $api->setBuilderOptions([
-                'strict_variables' => true,
-                'optimizations' => 0,
-                'debug' => true,
-                'cache' => false,
-            ])
+            'strict_variables' => true,
+            'optimizations' => 0,
+            'debug' => true,
+            'cache' => false,
+        ])
             ->setApiCredentials(
-                $this->company->production ? $this->company->client_id : 'test-85e5b0ae-255c-4891-a595-0b98c65c9854', 
+                $this->company->production ? $this->company->client_id : 'test-85e5b0ae-255c-4891-a595-0b98c65c9854',
                 $this->company->production ? $this->company->client_secret : 'test-Hty/M6QshYvPgItX2P0+Kw=='
             )
             ->setClaveSOL(
-                $this->company->ruc, 
-                $this->company->production ? $this->company->user_sol : 'MODDATOS', 
+                $this->company->ruc,
+                $this->company->production ? $this->company->user_sol : 'MODDATOS',
                 $this->company->production ? $this->company->password_sol : 'MODDATOS'
             )
             ->setCertificate($this->company->certificate);
@@ -70,11 +70,11 @@ trait UtilTrait
             ->setNombreComercial($this->company->nombreComercial)
             ->setAddress(
                 (new Address())
-                ->setDireccion($this->company->direccion)
-                ->setDistrito($this->company->district->name)
-                ->setProvincia($this->company->district->province->name)
-                ->setDepartamento($this->company->district->province->department->name)
-                ->setUbigueo($this->company->ubigeo)
+                    ->setDireccion($this->company->direccion)
+                    ->setDistrito($this->company->district->name)
+                    ->setProvincia($this->company->district->province->name)
+                    ->setDepartamento($this->company->district->province->department->name)
+                    ->setUbigueo($this->company->ubigeo)
             );
     }
 
@@ -92,11 +92,11 @@ trait UtilTrait
         if (isset($client['address'])) {
             $greenClient->setAddress(
                 (new Address())
-                ->setDireccion($client['address']['direccion'] ?? null)
-                ->setDepartamento($client['address']['departamento'] ?? null)
-                ->setProvincia($client['address']['provincia'] ?? null)
-                ->setDistrito($client['address']['distrito'] ?? null)
-                ->setUbigueo($client['address']['ubigueo'] ?? null)
+                    ->setDireccion($client['address']['direccion'] ?? null)
+                    ->setDepartamento($client['address']['departamento'] ?? null)
+                    ->setProvincia($client['address']['provincia'] ?? null)
+                    ->setDistrito($client['address']['distrito'] ?? null)
+                    ->setUbigueo($client['address']['ubigueo'] ?? null)
             );
         }
 
@@ -148,11 +148,10 @@ trait UtilTrait
 
         $ticket = $result->getTicket();
         $result = $see->getStatus($ticket);
-
-
     }
 
-    public function getReportHtml($invoice, $hash, $company){
+    public function getReportHtml($invoice, $hash, $company)
+    {
 
         /* $twigOptions = [
             'cache' => __DIR__ . '/cache',
@@ -167,18 +166,18 @@ trait UtilTrait
         $params = [
             'system' => [
                 'logo' => $company->image_path ? Storage::get($company->image_path) : file_get_contents(public_path('img/no-image.jpg')),
-                'hash' => $hash, // Valor Resumen 
+                'hash' => $hash, // Valor Resumen
             ],
             'user' => [
                 'header'     => 'Telf: <b>987601368</b>', // Texto que se ubica debajo de la dirección de empresa
                 'extras'     => [
                     // Leyendas adicionales
                     [
-                        'name' => 'CONDICION DE PAGO', 
+                        'name' => 'CONDICION DE PAGO',
                         'value' => 'Efectivo'
                     ],
                     [
-                        'name' => 'VENDEDOR' , 
+                        'name' => 'VENDEDOR',
                         'value' => $company->razonSocial
                     ],
                 ],
@@ -206,20 +205,22 @@ trait UtilTrait
             'page-height' => '29.7cm',
         ]);
 
-        $report->setBinPath(env('WKHTMLTOPDF_BINARIES')); // Ruta relativa o absoluta de wkhtmltopdf
+        //$report->setBinPath(env('WKHTMLTOPDF_BINARIES')); // Ruta relativa o absoluta de wkhtmltopdf
+        $binPath = config('pdf.wkhtmltopdf_bin');
+        $report->setBinPath($binPath);
 
         $extras = [];
         if (in_array($invoice->getTipoDoc(), ['01', '03'])) {
 
             $formaPago = $invoice->getFormaPago();
             $extras[] = [
-                'name' => 'CONDICION DE PAGO', 
+                'name' => 'CONDICION DE PAGO',
                 'value' => $formaPago ? $formaPago->getTipo() : 'Efectivo'
             ];
         }
 
         $extras[] = [
-            'name' => 'VENDEDOR' , 
+            'name' => 'VENDEDOR',
             'value' => $company->razonSocial
         ];
 
@@ -236,12 +237,11 @@ trait UtilTrait
         $params = [
             'system' => [
                 'logo' => $company->logo_path ? Storage::get($company->logo_path) : file_get_contents(public_path('img/no-image.jpg')),
-                'hash' => $hash, // Valor Resumen 
+                'hash' => $hash, // Valor Resumen
             ],
             'user' => $user
         ];
 
         return $report->render($invoice, $params);
-
     }
 }
