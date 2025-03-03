@@ -9,7 +9,7 @@
 ]">
 
     @push('css')
-        
+
         <style>
             /* body{
                 background-color: #f3f4f6 !important;

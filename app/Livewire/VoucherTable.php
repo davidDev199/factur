@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Exports\InvoicesExport;
 use App\Livewire\Forms\EmailForm;
 use App\Livewire\Forms\VoidedForm;
 use App\Livewire\Forms\WhatsappForm;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Rappasoft\LaravelLivewireTables\Views\Filters\DateRangeFilter;
 use Rappasoft\LaravelLivewireTables\Views\Filters\SelectFilter;
+use Maatwebsite\Excel\Facades\Excel; // Añadir esta línea
+use Illuminate\Support\Facades\Log; // Add this line
 
 class VoucherTable extends DataTableComponent
 {
@@ -33,6 +36,7 @@ class VoucherTable extends DataTableComponent
 
         $this->setConfigurableAreas([
             'after-wrapper' => 'vouchers.partials.modals',
+            'toolbar-left-start' => 'vouchers.partials.excel-button', // Añadir esta línea
         ]);
 
         $this->setTdAttributes(function(Column $column, $row, $columnIndex, $rowIndex) {
@@ -41,7 +45,7 @@ class VoucherTable extends DataTableComponent
                 'class' => 'line-through text-red-500',
               ];
             }
-         
+
             return [];
           });
     }
@@ -85,7 +89,7 @@ class VoucherTable extends DataTableComponent
                         $query->where('serie', 'like', '%' . $search[0] . '%')
                             ->where('correlativo', 'like', '%' . $search[1] . '%');
                     });
-                                                
+
                 }),
 
             Column::make("Cliente", "client")
@@ -102,7 +106,7 @@ class VoucherTable extends DataTableComponent
                 ->searchable(function ($query, $search) {
                     $query->orWhere('client->numDoc', 'like', '%' . $search . '%')
                         ->orWhereRaw("LOWER(json_unquote(json_extract(client, '$.rznSocial'))) LIKE ?", ['%' . strtolower($search) . '%']);
-                        
+
                 })
                 ->html(),
 
@@ -213,7 +217,7 @@ class VoucherTable extends DataTableComponent
                 'text' => $e->getMessage()
             ]);
         }
-        
+
     }
 
     public function downloadCDR(Invoice $invoice)
@@ -358,5 +362,11 @@ class VoucherTable extends DataTableComponent
         return Invoice::query()
             ->where('company_id', session('company')->id)
             ->where('production', session('company')->production);
+    }
+
+    public function downloadExcel()
+    {
+        $filters = $this->getAppliedFilters();
+        return Excel::download(new InvoicesExport($filters), 'invoices.xlsx');
     }
 }
