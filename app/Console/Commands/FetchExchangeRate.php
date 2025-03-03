@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\Sunat\ExchangeRateService;
 use Illuminate\Console\Command;
+use Illuminate\Console\Scheduling\Schedule;
 
 class FetchExchangeRate extends Command
 {
@@ -20,4 +21,5 @@ class FetchExchangeRate extends Command
         $this->exchangeRateService->fetchAndSave();
         $this->info('Tipo de cambio actualizado correctamente.');
     }
+
 }
