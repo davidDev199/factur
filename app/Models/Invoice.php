@@ -22,7 +22,7 @@ class Invoice extends Model
         'formaPago',
         'cuotas',
         'tipoMoneda',
-        
+
         'tipDocAfectado',
         'numDocfectado',
         'codMotivo',
@@ -32,7 +32,7 @@ class Invoice extends Model
 
         'company',
         'client',
-        
+
         'mtoOperGravadas',
         'mtoOperExoneradas',
         'mtoOperInafectas',
