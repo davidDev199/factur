@@ -12,11 +12,14 @@
             <th>RAZON SOCIAL DEL CLIENTE</th>
             <th>CENTRO DE COSTO</th>
             <th>BASE IMPONIBLE</th>
-            <th>Monto</th>
-            <th>PDF</th>
-            <th>XML</th>
-            <th>CDR</th>
-            <th>Sunat Response</th>
+            <th>IGV</th>
+            <th>NO GRAVADOS</th>
+            <th>IMPORTE TOTAL</th>
+            <th>TIPO CAMBIO</th>
+            <th>FECHA DOC. REF.</th>
+            <th>TD REF</th>
+            <th>SERIE REF.</th>
+            <th>NUMERO REF.</th>
         </tr>
     </thead>
     <tbody>
@@ -39,14 +42,21 @@
                 <td>{{ $invoice->correlativo }}</td>
                 <td>{{ $invoice->client['numDoc'] ?? 'S/D' }}</td>
                 <td>{{ $invoice->client['rznSocial'] ?? 'S/D' }}</td>
-                <td>{{ $invoice->client['rznSocial'] ?? 'S/D' }}</td>
                 <td>
-                    020109</td>
-                <td>{{ $invoice->tipoMoneda . ' ' . number_format($invoice->mtoImpVenta, 2) }}</td>
-                <td>{{ $invoice->pdf_path }}</td>
-                <td>{{ $invoice->xml_path }}</td>
-                <td>{{ $invoice->cdr_path }}</td>
-                <td>{{ $invoice->sunatResponse['success'] ? 'Aceptado' : 'Rechazado' }}</td>
+                    020103</td>
+                    <td>{{ $invoice->mtoOperGravadas ?? 'S/D' }}</td>
+
+                <td>{{ $invoice->mtoIGV ?? 'S/D' }}</td>
+
+                <td>{{ $invoice->mtoOperInafectas ?? 'S/D' }}</td>
+                <td>{{ $invoice->mtoImpVenta ?? 'S/D' }}</td>
+                    <td></td>
+                <td></td>
+               <td></td>
+                <td>{{$invoice->numDocfectado}}</td>
+                <td>{{$invoice->numDocfectado}}</td>
+
+
             </tr>
         @endforeach
     </tbody>
