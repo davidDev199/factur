@@ -28,7 +28,8 @@
                 <td>1</td>
                 <td>{{ $invoice->fechaEmision->format('d/m/Y') }}</td>
                 <td>{{ $invoice->fechaEmision->format('d/m/Y') }}</td>
-                <td>{{ $invoice->fecVencimiento->format('d/m/Y') }}</td>
+                {{-- <td>{{ $invoice->fecVencimiento->format('d/m/Y') }}</td> --}}
+                <td></td>
                 <td>
                     @if($invoice->tipoDoc == '03')
                         BV
