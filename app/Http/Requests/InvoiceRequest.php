@@ -57,8 +57,8 @@ class InvoiceRequest extends FormRequest
             ],
             'serie' => ['required', 'string', 'size:4'],
             'correlativo' => [
-                'required', 
                 'numeric',
+                'nullable',
                 Rule::when(request()->routeIs(['api.invoice.send', 'api.note.send']), [
                     Rule::unique('invoices')
                         ->where(function($query){
@@ -79,7 +79,7 @@ class InvoiceRequest extends FormRequest
             'numDocfectado' => ['required_if:tipoDoc,07,08', 'string'],
 
             'codMotivo' => [
-                'required_if:tipoDoc,07,08', 
+                'required_if:tipoDoc,07,08',
                 $this->tipoDoc == '07' ? 'exists:type_credit_notes,id' : 'exists:type_debit_notes,id',
             ],
 
@@ -96,7 +96,7 @@ class InvoiceRequest extends FormRequest
                 'in:Contado,Credito'
             ],
             'formaPago.monto' => [
-                'required_if:formaPago.tipo,Credito', 
+                'required_if:formaPago.tipo,Credito',
                 'numeric'
             ],
 
@@ -254,7 +254,7 @@ class InvoiceRequest extends FormRequest
                     );
                 }
 
-                
+
                 //Detracción
                 if ($this->has('detraccion') && !in_array($this->tipoOperacion, ['1001', '1002', '1003', '1004'])) {
                     $validator->errors()->add(
@@ -328,8 +328,8 @@ class InvoiceRequest extends FormRequest
 
                     }
 
-                    
-             
+
+
                 }
             }
         ];

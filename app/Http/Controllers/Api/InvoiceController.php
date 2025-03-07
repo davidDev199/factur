@@ -13,6 +13,7 @@ use App\Services\Sunat\UtilService;
 use App\Traits\Sunat\DataTrait;
 use Greenter\Report\XmlUtils;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Luecano\NumeroALetras\NumeroALetras;
 
@@ -30,12 +31,37 @@ class InvoiceController extends Controller
 
     public function send(InvoiceRequest $request)
     {
+
+        if (!$request->input('correlativo')) {
+            // Obtener los datos de la tabla branch_company_document
+            $branch = DB::table('branch_company_document')
+                ->where('branch_id', 1)
+                ->where('company_id', 1)
+                ->first();
+
+            // Obtener la última factura o boleta registrada
+            $lastInvoice = Invoice::where('company_id', 1)
+                ->where('serie',$request->serie)
+                ->orderByDesc('correlativo') // Ordenar de mayor a menor
+                ->first();
+
+            // Calcular el nuevo correlativo
+            $newCorrelativo = $lastInvoice
+                ? $lastInvoice->correlativo + 1 // Si existe, incrementar
+                : $branch->correlativo;        // Si no existe, usar el base de branch
+
+            // Asignar el nuevo correlativo al request
+            $request->merge([
+                'correlativo' => $newCorrelativo
+            ]);
+
+        }
         $data = $request->all();
         $data['company_id'] = $this->company->id;
         $data['production'] = $this->company->production;
-        
+
         $data = $this->getData($data);
-        
+
         $invoice = Invoice::create($data);
 
         $util = new UtilService($this->company);
@@ -97,9 +123,9 @@ class InvoiceController extends Controller
             return response()->json([
                 'error' => $e->getMessage(),
             ], 500);
-            
+
         }
-        
+
     }
 
     public function xml(InvoiceRequest $request)
