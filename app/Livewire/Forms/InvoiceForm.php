@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\ExchangeRate;
 use App\Models\Invoice;
 use App\Services\Sunat\DocumentService;
 use App\Services\Sunat\InvoiceService;
@@ -107,7 +108,7 @@ class InvoiceForm extends Form
         'tipoDoc' => '',
         'numDoc' => '',
     ];
-    
+
     public function rules()
     {
         return [
@@ -120,8 +121,8 @@ class InvoiceForm extends Form
             ],
             'tipoDoc' => ['required', 'in:01,03'],
             'serie' => [
-                'required', 
-                'string', 
+                'required',
+                'string',
                 'size:4',
                 Rule::when($this->tipoDoc == '01', 'regex:/^F/', 'regex:/^B/'),
             ],
@@ -129,7 +130,7 @@ class InvoiceForm extends Form
             'correlativo' => ['required', 'numeric'],
 
             'fechaEmision' => [
-                'required', 
+                'required',
                 'date',
                 //Fechas permitidas entre 3 dias antes y hoy
                 'after_or_equal:' . now()->subDays(3)->format('Y-m-d'),
@@ -148,7 +149,7 @@ class InvoiceForm extends Form
             ],
             'cuotas.*.monto' => ['required', 'numeric'],
             'cuotas.*.fechaPago' => [
-                'required', 
+                'required',
                 'date',
                 'after:fechaEmision',
             ],
@@ -246,7 +247,7 @@ class InvoiceForm extends Form
         ];
     }
 
-    public function validationAttributes() 
+    public function validationAttributes()
     {
         return [
             'tipoOperacion' => 'tipo de operación',
@@ -263,7 +264,7 @@ class InvoiceForm extends Form
             'detraccion.codBienDetraccion' => 'código de bienes sujeto a detracción',
             'detraccion.codMedioPago' => 'código de medio de pago',
             'detraccion.ctaBanco' => 'cuenta bancaria',
-            
+
             'perception.codReg' => 'tipo de percepción',
 
             'huesped.paisDoc' => 'país de emisión del documento del huesped',
@@ -284,8 +285,13 @@ class InvoiceForm extends Form
         $this->validate();
         $this->getData();
 
-        $invoice = Invoice::create($this->all());
-        
+        $invoiceData = $this->all();
+        if ($this->tipoMoneda === 'USD') {
+            $invoiceData['tipo_cambio'] = ExchangeRate::orderBy('date', 'desc')->first()->rate ?? null;
+        }
+
+        $invoice = Invoice::create($invoiceData);
+
         $util = new UtilService(session('company'));
         $document = new DocumentService();
 
@@ -326,15 +332,15 @@ class InvoiceForm extends Form
                 $invoice->cdr_path = $directory . 'cdr/R-' . Str::uuid() . '.zip';
                 Storage::put($invoice->cdr_path, $result->getCdrZip());
             }
-            
+
             $invoice->save();
 
             $this->showResponse($invoice);
 
             return redirect()->route('vouchers.index');
-            
+
         } catch (\Exception $e) {
-            
+
             session()->flash('swal', [
                 'icon' => 'error',
                 'title' => 'Error al enviar el comprobante',
@@ -429,7 +435,7 @@ class InvoiceForm extends Form
         $legends = [];
 
         if ($details->whereIn('tipAfeIgv', ['10', '17', '20', '30', '40'])->count()) {
-         
+
             $currency = match ($this->tipoMoneda) {
                 'PEN' => 'SOLES',
                 'USD' => 'DÓLARES AMERICANOS',
@@ -457,8 +463,8 @@ class InvoiceForm extends Form
             ];
         }
 
-        if (in_array($this->tipoDoc, ['01','03'])) {   
-        
+        if (in_array($this->tipoDoc, ['01','03'])) {
+
             if ($this->tipoOperacion == '1001') {
                 $legends[] = [
                     'code' => '2006',
@@ -559,4 +565,4 @@ class InvoiceForm extends Form
             }
         }
     }
-} 
+}

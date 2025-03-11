@@ -2,6 +2,7 @@
     <thead>
         <tr style="background-color: green; color: white;">
             <th></th>
+            <th>TIPO DOC</th>
             <th>FECHA REGISTRO</th>
             <th>FECHA DOCUMTO.</th>
             <th>FECHA VENCMTO.</th>
@@ -10,6 +11,9 @@
             <th>CORRELATIVO</th>
             <th>CODIGO CLIENTE</th>
             <th>RAZON SOCIAL DEL CLIENTE</th>
+            <th>ESTADO</th>
+            <th>MONEDA</th>
+            <th>TIPO DE CAMBIO</th>
             <th>CENTRO DE COSTO</th>
             <th>BASE IMPONIBLE</th>
             <th>IGV</th>
@@ -26,6 +30,7 @@
         @foreach($invoices as $invoice)
             <tr>
                 <td>1</td>
+                <td>{{$invoice->tipoDoc}}</td>
                 <td>{{ $invoice->fechaEmision->format('d/m/Y') }}</td>
                 <td>{{ $invoice->fechaEmision->format('d/m/Y') }}</td>
                 {{-- <td>{{ $invoice->fecVencimiento->format('d/m/Y') }}</td> --}}
@@ -43,6 +48,15 @@
                 <td>{{ $invoice->correlativo }}</td>
                 <td>{{ $invoice->client['numDoc'] ?? 'S/D' }}</td>
                 <td>{{ $invoice->client['rznSocial'] ?? 'S/D' }}</td>
+                <td>
+                    @if($invoice->sunatResponse['success'])
+                        Aprobado
+                    @else
+                        Rechazado
+                    @endif
+                </td>
+                <td>{{ $invoice->tipoMoneda}}</td>
+                <td>{{ $invoice->tipo_cambio  }}</td>
                 <td>
                     020103</td>
                     <td>{{ $invoice->mtoOperGravadas ?? 'S/D' }}</td>
