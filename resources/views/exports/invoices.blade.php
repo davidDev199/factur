@@ -49,7 +49,9 @@
                 <td>{{ $invoice->client['numDoc'] ?? 'S/D' }}</td>
                 <td>{{ $invoice->client['rznSocial'] ?? 'S/D' }}</td>
                 <td>
-                    @if($invoice->sunatResponse['success'])
+                    @if($invoice->voided)
+                        Anulado
+                    @elseif($invoice->sunatResponse['success'])
                         Aprobado
                     @else
                         Rechazado
