@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Exports\AnexosExport;
 use App\Exports\InvoicesExport;
 use App\Livewire\Forms\EmailForm;
 use App\Livewire\Forms\VoidedForm;
@@ -36,7 +37,12 @@ class VoucherTable extends DataTableComponent
 
         $this->setConfigurableAreas([
             'after-wrapper' => 'vouchers.partials.modals',
-            'toolbar-left-start' => 'vouchers.partials.excel-button', // Añadir esta línea
+            'toolbar-left-start' => [
+                'vouchers.partials.excel-button', // Botón Descargar Excel
+            ],
+            'toolbar-left-end' => [
+                'vouchers.partials.anexos-button', // Botón Descargar Anexos
+            ],
         ]);
 
         $this->setTdAttributes(function(Column $column, $row, $columnIndex, $rowIndex) {
@@ -368,5 +374,14 @@ class VoucherTable extends DataTableComponent
     {
         $filters = $this->getAppliedFilters();
         return Excel::download(new InvoicesExport($filters), 'invoices.xlsx');
+    }
+
+    public function downloadAnexos()
+    {
+        // Lógica para descargar anexos
+
+        $filters = $this->getAppliedFilters();
+        return Excel::download(new AnexosExport($filters), 'anexos.xlsx');
+
     }
 }
