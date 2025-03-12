@@ -32,6 +32,7 @@ class InvoiceController extends Controller
     public function send(InvoiceRequest $request)
     {
 
+
         if (!$request->input('correlativo')) {
             // Obtener los datos de la tabla branch_company_document
             $branch = DB::table('branch_company_document')
@@ -64,7 +65,7 @@ class InvoiceController extends Controller
 
         $invoice = Invoice::create($data);
 
-        $util = new UtilService($this->company);
+        $util = new UtilService($this->company,$request->vendedor);
         $document = new DocumentService();
 
         $invoiceGreenter = $document->getInvoice($invoice);

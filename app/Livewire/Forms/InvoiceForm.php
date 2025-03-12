@@ -13,6 +13,7 @@ use Greenter\Report\XmlUtils;
 use Greenter\Xml\Builder\InvoiceBuilder;
 use Greenter\XMLSecLibs\Sunat\SignedXml;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -29,6 +30,7 @@ class InvoiceForm extends Form
     #[Url()]
     public $tipoDoc = '01';
     public $serie = '';
+    public $vendedor = '';
     public $correlativo = '';
     public $fechaEmision = null;
     public $fecVencimiento = null;
@@ -282,6 +284,8 @@ class InvoiceForm extends Form
 
     public function sendInvoice()
     {
+        Log::info("Hola");
+
         $this->validate();
         $this->getData();
 
@@ -291,8 +295,7 @@ class InvoiceForm extends Form
         }
 
         $invoice = Invoice::create($invoiceData);
-
-        $util = new UtilService(session('company'));
+        $util = new UtilService(session('company'), $this->vendedor);
         $document = new DocumentService();
 
         $invoiceGreenter = $document->getInvoice($invoice);
@@ -423,8 +426,8 @@ class InvoiceForm extends Form
         $this->valorVenta = $details->whereIn('tipAfeIgv', ['10', '17', '20', '30', '40'])->sum('mtoValorVenta') - $descuentos->where('codTipo', '02')->sum('monto');
         $this->subTotal = $this->valorVenta + $this->totalImpuestos + $descuentos->where('codTipo', '04')->sum('monto') * 0.18;
         $mtoImpVenta = $this->subTotal - $this->sumOtrosDescuentos - $this->totalAnticipos;
-        $this->mtoImpVenta = floor($mtoImpVenta * 10) / 10;
-        $this->redondeo =  $mtoImpVenta - $this->mtoImpVenta;
+        $this->mtoImpVenta = $mtoImpVenta ;
+        //$this->redondeo =  $mtoImpVenta - $this->mtoImpVenta;
     }
 
     public function setLegends()

@@ -69,6 +69,7 @@ class InvoiceRequest extends FormRequest
             ],
 
             'fechaEmision' => ['required', 'date'],
+            'vendedor' => ['nullable', 'string'],
             'fecVencimiento' => ['nullable', 'date'],
 
             'tipDocAfectado' => [

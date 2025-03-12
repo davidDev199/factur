@@ -25,10 +25,12 @@ class UtilService
 {
     protected $see;
     protected $company;
+    protected $vendedor;
 
-    public function __construct($company)
+    public function __construct($company, $vendedor = null)
     {
         $this->company = $company;
+        $this->vendedor = $vendedor ?: $company->razonSocial;
     }
 
     public function getSee()
@@ -208,7 +210,7 @@ class UtilService
                     ],
                     [
                         'name' => 'VENDEDOR',
-                        'value' => $this->company->razonSocial
+                        'value' => $this->vendedor
                     ],
                 ],
                 'footer' => 'Gracias por su compra.', // Texto que se ubica debajo de las observaciones
@@ -252,7 +254,7 @@ class UtilService
 
         $extras[] = [
             'name' => 'VENDEDOR',
-            'value' => $this->company->razonSocial
+            'value' => $this->vendedor
         ];
 
         $user['extras'] = $extras;
