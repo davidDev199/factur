@@ -47,8 +47,8 @@ trait DataTrait
         $data['valorVenta'] = $details->whereIn('tipAfeIgv', ['10', '17', '20', '30', '40'])->sum('mtoValorVenta') - $descuentos->where('codTipo', '02')->sum('monto');
         $data['subTotal'] = $data['valorVenta'] + $data['totalImpuestos'] + $descuentos->where('codTipo', '04')->sum('monto') * 0.18;
         $mtoImpVenta = $data['subTotal'] - $data['sumOtrosDescuentos'] - $data['totalAnticipos'];
-        $data['mtoImpVenta'] = floor($mtoImpVenta * 10) / 10;
-        $data['redondeo'] =  $mtoImpVenta - $data['mtoImpVenta'];
+        $data['mtoImpVenta'] = $mtoImpVenta;
+        //$data['redondeo'] =  $mtoImpVenta - $data['mtoImpVenta'];
     }
 
     public function getLegends(&$data)
