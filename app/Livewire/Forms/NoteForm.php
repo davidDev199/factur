@@ -75,7 +75,7 @@ class NoteForm extends Form
             'tipoDoc' => ['required', 'in:07,08'],
             'serie' => [
                 'required',
-                'string', 
+                'string',
                 'size:4',
             ],
             'correlativo' => 'required',
@@ -104,7 +104,7 @@ class NoteForm extends Form
         $this->getData();
 
         $invoice = Invoice::create($this->all());
-        
+
         $util = new UtilService(session('company'));
         $document = new DocumentService();
 
@@ -146,7 +146,7 @@ class NoteForm extends Form
             // Guardamos el CDR
             $invoice->cdr_path = $directory . 'cdr/R-' . $invoiceGreenter->getName() . '.zip';
             Storage::put($invoice->cdr_path, $result->getCdrZip());
-            
+
             $cdr = $result->getCdrResponse();
             $invoice->sunatResponse = $util->readCdr($cdr);
             $invoice->save();
@@ -154,9 +154,8 @@ class NoteForm extends Form
             $this->showResponse($invoice);
 
             return redirect()->route('vouchers.index');
-            
         } catch (\Exception $e) {
-            
+
             session()->flash('swal', [
                 'icon' => 'error',
                 'title' => 'Error al enviar el comprobante',
@@ -165,7 +164,6 @@ class NoteForm extends Form
 
             return redirect()->route('vouchers.index');
         }
-
     }
 
     public function showResponse(Invoice $invoice)
@@ -220,8 +218,8 @@ class NoteForm extends Form
         $this->valorVenta = $details->whereIn('tipAfeIgv', ['10', '17', '20', '30', '40'])->sum('mtoValorVenta');
         $this->subTotal = $this->valorVenta + $this->totalImpuestos;
         $mtoImpVenta = $this->subTotal;
-        $this->mtoImpVenta = floor($mtoImpVenta * 10) / 10;
-        $this->redondeo =  $mtoImpVenta - $this->mtoImpVenta;
+        $this->mtoImpVenta = $mtoImpVenta;
+        //$this->redondeo =  $mtoImpVenta - $this->mtoImpVenta;
     }
 
     public function getLegends()

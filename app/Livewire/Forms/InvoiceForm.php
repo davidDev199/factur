@@ -169,7 +169,6 @@ class InvoiceForm extends Form
                     if ($this->tipoDoc == '01' && $this->tipoOperacion != '0401') {
                         return $this->client['tipoDoc'] != '6';
                     }
-
                 }),
             ],
 
@@ -341,7 +340,6 @@ class InvoiceForm extends Form
             $this->showResponse($invoice);
 
             return redirect()->route('vouchers.index');
-
         } catch (\Exception $e) {
 
             session()->flash('swal', [
@@ -352,7 +350,6 @@ class InvoiceForm extends Form
 
             return redirect()->route('vouchers.index');
         }
-
     }
 
     public function showResponse(Invoice $invoice)
@@ -394,7 +391,7 @@ class InvoiceForm extends Form
         if ($this->formaPago['tipo'] == 'Contado') {
             $this->cuotas = [];
             unset($this->formaPago['monto']);
-        }else{
+        } else {
             $this->formaPago['monto'] = collect($this->cuotas)->sum('monto');
         }
 
@@ -426,7 +423,7 @@ class InvoiceForm extends Form
         $this->valorVenta = $details->whereIn('tipAfeIgv', ['10', '17', '20', '30', '40'])->sum('mtoValorVenta') - $descuentos->where('codTipo', '02')->sum('monto');
         $this->subTotal = $this->valorVenta + $this->totalImpuestos + $descuentos->where('codTipo', '04')->sum('monto') * 0.18;
         $mtoImpVenta = $this->subTotal - $this->sumOtrosDescuentos - $this->totalAnticipos;
-        $this->mtoImpVenta = $mtoImpVenta ;
+        $this->mtoImpVenta = $mtoImpVenta;
         //$this->redondeo =  $mtoImpVenta - $this->mtoImpVenta;
     }
 
@@ -449,7 +446,6 @@ class InvoiceForm extends Form
                 'code' => '1000',
                 'value' => $formatter->toInvoice($this->mtoImpVenta, 2, $currency)
             ];
-
         }
 
         if ($details->whereNotIn('tipAfeIgv', ['10', '17', '20', '30', '40'])->count()) {
@@ -466,7 +462,7 @@ class InvoiceForm extends Form
             ];
         }
 
-        if (in_array($this->tipoDoc, ['01','03'])) {
+        if (in_array($this->tipoDoc, ['01', '03'])) {
 
             if ($this->tipoOperacion == '1001') {
                 $legends[] = [
@@ -481,7 +477,6 @@ class InvoiceForm extends Form
                     'value' => 'COMPROBANTE DE PERCEPCIÓN'
                 ];
             }
-
         }
 
         $this->legends = $legends;
