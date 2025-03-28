@@ -39,18 +39,15 @@
                 </x-label>
 
                 <x-select wire:model="invoice.serie" class="w-full">
-
                     @forelse ($series as $serie)
                     <option value="{{ $serie->name }}">
                         {{ $serie->name }}
                     </option>
                     @empty
-
                     <option value="">
                         No hay series disponibles
                     </option>
                     @endforelse
-
                 </x-select>
             </div>
 

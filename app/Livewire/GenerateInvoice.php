@@ -9,6 +9,7 @@ use App\Models\Operation;
 use App\Models\Product;
 use App\Models\ExchangeRate; // Importar el modelo ExchangeRate
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -203,6 +204,17 @@ class GenerateInvoice extends Component
         }
     }
 
+    public function updatedInvoiceSerie($value)
+    {
+        Log::info('Serie changed to: ' . $value); // Log the selected "Serie" value
+        $correlativo = Invoice::where('company_id', session('company')->id)
+            ->where('serie', $value)
+            ->where('production', session('company')->production)
+            ->max('correlativo');
+        Log::INFO('Correlativo: ' . $correlativo); // Log the correlativo value
+        $this->invoice->correlativo = $correlativo ? $correlativo + 1 : 1;
+    }
+
     //Listeners
     #[On('clientAdded')]
     public function clientAdded($clientId)
@@ -240,7 +252,8 @@ class GenerateInvoice extends Component
     //Métodos
     public function getSeries()
     {
-        $this->reset(['invoice.serie', 'invoice.correlativo']);
+
+       // $this->reset(['invoice.serie', 'invoice.correlativo']);
 
         $this->series = DB::table('branch_company_document')
             ->select('serie as name', 'correlativo')
@@ -248,6 +261,7 @@ class GenerateInvoice extends Component
             ->where('document_id', $this->invoice->tipoDoc)
             ->get();
 
+        Log::info($this->series);
         //Serie
         $serie = $this->series->first();
         if ($serie) {
@@ -260,9 +274,11 @@ class GenerateInvoice extends Component
             ->where('production', session('company')->production)
             ->max('correlativo');
 
+       // Log::INFO('Correlativo: ' . $correlativo); // Log the correlativo value
         if ($correlativo) {
             $this->invoice->correlativo = $correlativo + 1;
         }
+
     }
 
     public function getOperations()
