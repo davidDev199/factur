@@ -43,11 +43,11 @@
 
                 <td>
                 @if($invoice->client['tipoDoc'] == 1)
-                    PERSONA NATURAL
+                    01
                 @elseif($invoice->client['tipoDoc'] == 6)
-                    PERSONA JURIDICA
+                    02
                 @else
-                    NO DOMICIALIADO
+                    03
                 @endif
                 </td>
                 <td>{{ $invoice->client['tipoDoc'] == 6 ? '' : (explode(' ', $invoice['client']['rznSocial'])[0] ?? '') }}</td> <!-- Apellido Paterno -->
