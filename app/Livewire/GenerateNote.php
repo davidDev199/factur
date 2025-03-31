@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\TypeCreditNote;
 use App\Models\TypeDebitNote;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -49,7 +50,7 @@ class GenerateNote extends Component
         $this->note->withValidator(function ($validator) {
             $validator->after(function ($validator) {
                 if (!$this->client_id) {
-                    
+
                     $validator->errors()->add('client_id', 'El campo cliente es obligatorio.');
                 }
             });
@@ -147,7 +148,7 @@ class GenerateNote extends Component
                     'descripcion',
                 ]);
 
-            $product['cantidad'] = 1;            
+            $product['cantidad'] = 1;
 
             $this->reset('product_id');
 
@@ -176,6 +177,17 @@ class GenerateNote extends Component
         ];
     }
 
+    public function updatedNoteSerie($value)
+    {
+        Log::info('Serie changed to: ' . $value); // Log the selected "Serie" value
+        $correlativo = Invoice::where('company_id', session('company')->id)
+            ->where('serie', $value)
+            ->where('production', session('company')->production)
+            ->max('correlativo');
+        Log::INFO('Correlativo: ' . $correlativo); // Log the correlativo value
+        $this->note->correlativo = $correlativo ? $correlativo + 1 : 1;
+    }
+
     //Metodos
     public function getSeries()
     {
@@ -201,7 +213,7 @@ class GenerateNote extends Component
         if ($correlativo) {
             $this->note->correlativo = $correlativo + 1;
         }
-        
+
     }
 
     public function getReasons()
@@ -311,7 +323,7 @@ class GenerateNote extends Component
 
         $item['factorIcbper'] = $product['icbper'] ? $product['factorIcbper'] : 0;
         $item['icbper'] = $item['factorIcbper'] * $item['cantidad'];
-        
+
         $item['tipAfeIgv'] = $product['tipAfeIgv'];
 
         $item['totalImpuestos'] = $item['igv'] + $item['isc'] + $item['icbper'];
@@ -326,7 +338,7 @@ class GenerateNote extends Component
 
         $this->reset(['product', 'product_key', 'openModal']);
         $this->note->getData();
-    }    
+    }
 
     public function removeDetail($key)
     {

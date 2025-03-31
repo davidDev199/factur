@@ -141,7 +141,7 @@
                     <x-label class="whitespace-nowrap">
                         Documento Afectado
                     </x-label>
-    
+
                     <x-input class="w-36"
                         wire:model="note.numDocfectado"
                         placeholder="Ejm: F001-111" />
@@ -192,12 +192,12 @@
                                 </td>
                                 <td>
                                     <div class="flex space-x-2">
-                                        <x-wire-mini-button green 
+                                        <x-wire-mini-button green
                                             wire:click="editDetail({{ $key }})"
                                             spinner="editDetail({{ $key }})"
                                             icon="pencil" />
 
-                                        <x-wire-mini-button red 
+                                        <x-wire-mini-button red
                                             wire:click="removeDetail({{ $key }})"
                                             spinner="removeDetail({{ $key }})"
                                             icon="trash" />
@@ -302,7 +302,7 @@
 
                 <x-input disabled class="w-36 text-sm text-right" value="{{number_format($note->mtoIGV, 2)}}" />
             </div>
-            
+
             @if ($note->mtoIvap)
                 <div class="flex items-center space-x-2">
                     <span class="whitespace-nowrap">
@@ -371,7 +371,7 @@
                     </div>
                 </div>
             @empty
-                
+
                 <div class="border border-gray-300 rounded overflow-hidden text-sm xl:flex">
                     <div class="p-2 bg-white border-b xl:border-b-0 xl:border-r border-gray-300">
                         <span class="font-bold">
@@ -398,12 +398,12 @@
     <div x-data="dataProduct">
 
         <form wire:submit="saveDetail">
-            <x-wire-modal-card 
+            <x-wire-modal-card
                 title="PRODUCTO"
                 name="simpleModal"
                 wire:model.live="openModal"
                 width="2xl">
-    
+
                 <x-wire-errors :only="[
                     'product.codProducto',
                     'product.unidad',
@@ -417,19 +417,19 @@
                     'product.icbper',
                     'product.factorIcbper',
                 ]" class="mb-4" />
-    
+
                 <div class="mb-4">
                     <x-label>
                         AFECTACION IGV
                     </x-label>
-    
+
                     <x-select x-model="product.tipAfeIgv" class="w-full text-xs">
                         <template x-for="affectation in affectations" :key="affectation.id">
                             <option x-text="affectation.description" :value="affectation.id"></option>
                         </template>
                     </x-select>
                 </div>
-    
+
                 <div class="grid grid-cols-3 gap-4 mb-4">
                     {{-- Cantidad --}}
                     <div>
@@ -438,13 +438,13 @@
                         </x-label>
                         <x-input x-model="product.cantidad" type="number" class="w-full text-xs" />
                     </div>
-                    
+
                     {{-- Unidad --}}
                     <div>
                         <x-label>
                             UNIDAD
                         </x-label>
-    
+
                         <x-select x-model="product.unidad" class="w-full text-xs">
                             @foreach ($units as $unit)
                                 <option value="{{ $unit['id'] }}">
@@ -453,35 +453,35 @@
                             @endforeach
                         </x-select>
                     </div>
-    
+
                     {{-- Codigo --}}
                     <div>
                         <x-label>
                             CÓDIGO
                         </x-label>
-    
+
                         <x-input x-model="product.codProducto" class="w-full text-xs" />
                     </div>
                 </div>
-    
+
                 {{-- Descripción --}}
                 <div class="mb-4">
                     <x-label>
                         DESCRIPCIÓN
                     </x-label>
-    
+
                     <x-input x-model="product.descripcion" class="w-full text-xs" />
                 </div>
-    
+
                 <div class="flex flex-col items-end space-y-4">
                     {{-- Valor unitario --}}
                     <div class="flex items-center space-x-2">
                         <span class="whitespace-nowrap text-sm">
                             Valor Unitario
                         </span>
-    
-                        <x-input 
-                            x-model="product.mtoValor" 
+
+                        <x-input
+                            x-model="product.mtoValor"
                             type="number"
                             step="0.01"
                             class="w-48 text-xs"
@@ -489,41 +489,41 @@
                             x-on:input="calculateTotal('mtoValor')"
                             />
                     </div>
-    
+
                     {{-- IGV --}}
                     <div class="flex items-center space-x-2">
                         <span class="whitespace-nowrap text-sm">
                             IGV
                         </span>
-    
+
                         <x-select x-model="product.porcentajeIgv" class="w-48 text-xs">
-    
+
                             <option value="0" x-bind:class="product.tipAfeIgv <= 17 ? 'hidden' : ''">
                                 IGV 0%
                             </option>
-    
+
                             <option value="4" x-bind:class="product.tipAfeIgv != 17 ? 'hidden' : ''">
                                 IGV 4%
                             </option>
-    
+
                             <option value="10" x-bind:class="product.tipAfeIgv >= 17 ? 'hidden' : ''">
                                 IGV 10%
                             </option>
-    
+
                             <option value="18" x-bind:class="product.tipAfeIgv >= 17 ? 'hidden' : ''">
                                 IGV 18%
                             </option>
-    
+
                         </x-select>
                     </div>
-    
+
                     {{-- Precio unitario --}}
                     <div class="flex items-center space-x-2">
                         <span class="whitespace-nowrap text-sm">
                             Precio Unitario
                         </span>
-    
-                        <x-input 
+
+                        <x-input
                             x-model="product.precioUnitario"
                             type="number"
                             step="0.01"
@@ -532,85 +532,85 @@
                             x-on:input="calculateTotal('precioUnitario')"
                             />
                     </div>
-    
+
                     {{-- ISC --}}
                     <div class="flex items-center space-x-2">
                         <span class="whitespace-nowrap text-sm">
                             ISC
                         </span>
-    
+
                         <x-select x-model="product.tipSisIsc" class="w-48 text-xs">
                             <option value="">
                                 Ninguno
                             </option>
-    
+
                             <option value="01">
                                 Sistema al valor
                             </option>
-    
+
                             <option value="02">
                                 Monto Fijo
                             </option>
-    
+
                             <option value="03">
                                 Precios Público
                             </option>
-    
+
                         </x-select>
                     </div>
-    
+
                     {{-- Porcentaje Isc --}}
                     <template x-if="product.tipSisIsc">
                         <div class="flex items-center space-x-2">
                             <span class="whitespace-nowrap text-sm">
                                 Porcentaje Isc
                             </span>
-    
+
                             <x-input x-model="product.porcentajeIsc" type="number" class="w-48 text-xs" />
                         </div>
                     </template>
-    
+
                     {{-- ICBPER --}}
                     <div class="flex items-center space-x-2">
                         <span class="whitespace-nowrap text-sm">
                             ICBPER
                         </span>
-    
+
                         <x-select x-model="product.icbper" class="w-48 text-xs">
                             <option value="0">
                                 No
                             </option>
-    
+
                             <option value="1">
                                 Si
                             </option>
-    
+
                         </x-select>
-                        
+
                     </div>
-    
+
                     {{-- Factor Icbper --}}
                     <template x-if="product.icbper == 1">
                         <div class="flex items-center space-x-2">
                             <span class="whitespace-nowrap text-sm">
                                 Factor Icbper
                             </span>
-        
+
                             <x-input x-model="product.factorIcbper" step="0.01" type="number" class="w-48 text-xs" />
-                            
+
                         </div>
                     </template>
                 </div>
-    
+
                 <x-slot name="footer" class="flex justify-end gap-x-4">
                     <x-wire-button flat label="Cancel" x-on:click="close" />
-    
+
                     <x-wire-button type="submit" primary :label="isset($product_key) ? 'Actualizar' : 'Agregar'" />
                 </x-slot>
-    
+
             </x-wire-modal-card>
         </form>
-    
+
     </div>
 
     @push('js')

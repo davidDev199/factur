@@ -253,7 +253,7 @@ class GenerateInvoice extends Component
     public function getSeries()
     {
 
-       // $this->reset(['invoice.serie', 'invoice.correlativo']);
+        $this->reset(['invoice.serie', 'invoice.correlativo']);
 
         $this->series = DB::table('branch_company_document')
             ->select('serie as name', 'correlativo')
