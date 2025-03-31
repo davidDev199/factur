@@ -51,7 +51,7 @@
                 <td>
                     @if($invoice->voided)
                         Anulado
-                    @elseif($invoice->sunatResponse['success'])
+                    @elseif($invoice->sunatResponse['success'] ?? false)
                         Aprobado
                     @else
                         Rechazado
@@ -63,15 +63,14 @@
                     020103</td>
                     <td>{{ $invoice->mtoOperGravadas ?? 'S/D' }}</td>
 
-                <td>{{ $invoice->mtoIGV ?? 'S/D' }}</td>
-
-                <td>{{ $invoice->mtoOperInafectas ?? 'S/D' }}</td>
-                <td>{{ $invoice->mtoImpVenta ?? 'S/D' }}</td>
+                    <td>{{ isset($invoice->mtoIGV) ? number_format($invoice->mtoIGV, 2) : 'S/D' }}</td>
+                    <td>{{ isset($invoice->mtoOperInafectas) ? number_format($invoice->mtoOperInafectas, 2) : 'S/D' }}</td>
+                    <td>{{ isset($invoice->mtoImpVenta) ? number_format($invoice->mtoImpVenta, 2) : 'S/D' }}</td>
                     <td></td>
                 <td></td>
                <td></td>
-                <td>{{$invoice->numDocfectado}}</td>
-                <td>{{$invoice->numDocfectado}}</td>
+               <td>{{ explode('-', $invoice->numDocfectado)[0] }}</td>
+               <td>{{ explode('-', $invoice->numDocfectado)[1] ?? '' }}</td>
 
 
             </tr>
