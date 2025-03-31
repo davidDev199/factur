@@ -50,10 +50,10 @@
                     NO DOMICIALIADO
                 @endif
                 </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>{{ $invoice->client['tipoDoc'] == 6 ? '' : (explode(' ', $invoice['client']['rznSocial'])[0] ?? '') }}</td> <!-- Apellido Paterno -->
+                <td>{{ $invoice->client['tipoDoc'] == 6 ? '' : (explode(' ', $invoice['client']['rznSocial'])[1] ?? '') }}</td> <!-- Apellido Materno -->
+                <td>{{ $invoice->client['tipoDoc'] == 6 ? '' : (explode(' ', $invoice['client']['rznSocial'])[2] ?? '') }}</td> <!-- Primer Nombre -->
+                <td>{{ $invoice->client['tipoDoc'] == 6 ? '' : (implode(' ', array_slice(explode(' ', $invoice['client']['rznSocial']), 3)) ?? '') }}</td> <!-- Segundo Nombre -->
                 <td></td>
                 <td>1</td>
             </tr>
