@@ -3,6 +3,9 @@
 namespace App\Livewire;
 
 use App\Models\Client;
+use GuzzleHttp\Psr7\HttpFactory;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -57,27 +60,53 @@ class ClientCreate extends Component
                 Rule::when($this->client['tipoDoc'] == 6, ['numeric','digits:11','regex:/^(10|20)\d{9}$/']),
             ],
         ]);
-
-        $config = [
-            'representantes_legales' 	=> false,
-            'cantidad_trabajadores' 	=> false,
-            'establecimientos' 			=> false,
-            'deuda' 					=> false,
-        ];
-
-        $sunat = new \jossmp\sunat\ruc($config);
-        $response = $sunat->consulta($this->client['numDoc']);
-
-        if ($response->success) {
-
-            $this->client['rznSocial'] = $response->result->razon_social;
-            $this->client['direccion'] = $response->result->direccion;
-
-        }else{
+        $token = 'cGVydWRldnMucHJvZHVjdGlvbi5maXRjb2RlcnMuNjdkMDgwMjg5ZmE0MTczZjYxMzIwODZk';
+        $response = null;
+        if ($this->client['tipoDoc'] == 1) { // DNI
+            $url = 'https://api.perudevs.com/api/v1/dni/complete?document=' . $this->client['numDoc'] . '&key=' . $token;
+        } elseif ($this->client['tipoDoc'] == 6) { // RUC
+            $url = 'https://api.perudevs.com/api/v1/ruc?document=' . $this->client['numDoc'] . '&key=' . $token;
+        } else {
             $this->dispatch('swal', [
                 'icon' => 'error',
                 'title' => 'Error',
-                'text' => 'No se encontró la empresa',
+                'text' => 'Tipo de documento no válido',
+            ]);
+            return;
+        }
+
+        try {
+            $response = Http::get($url);
+            $data = $response->json();
+            Log::info('Consulta de documento: ', [
+                'url' => $url,
+                'response' => $data,
+            ]);
+            Log::info($data['resultado']['razon_social'] ?? null);
+            Log::info($data['resultado']['nombre_completo'] ?? null);
+            Log::info($data['resultado']['direccion'] ?? null);
+        } catch (\Exception $e) {
+            Log::error('Error al consultar el documento: ' . $e->getMessage());
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'Error',
+                'text' => 'No se pudo conectar con el servicio',
+            ]);
+            return;
+        }
+
+        if ($response && $data['resultado']) {
+            if ($this->client['tipoDoc'] == 1) { // DNI
+                $this->client['rznSocial'] = $data['resultado']['nombre_completo'] ?? null;
+            } elseif ($this->client['tipoDoc'] == 6) { // RUC
+                $this->client['rznSocial'] = $data['resultado']['razon_social'] ?? null;
+            }
+            $this->client['direccion'] = $data['resultado']['direccion'] ?? null;
+        } else {
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'Error',
+                'text' => 'No se encontró la información del documento',
             ]);
         }
     }
