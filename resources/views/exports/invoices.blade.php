@@ -27,16 +27,16 @@
         </tr>
     </thead>
     <tbody>
-        @foreach($invoices as $invoice)
+        @foreach ($invoices as $invoice)
             <tr>
                 <td>1</td>
-                <td>{{$invoice->tipoDoc}}</td>
+                <td>{{ $invoice->tipoDoc }}</td>
                 <td>{{ $invoice->fechaEmision->format('d/m/Y') }}</td>
                 <td>{{ $invoice->fechaEmision->format('d/m/Y') }}</td>
                 {{-- <td>{{ $invoice->fecVencimiento->format('d/m/Y') }}</td> --}}
                 <td></td>
                 <td>
-                    @if($invoice->tipoDoc == '03')
+                    @if ($invoice->tipoDoc == '03')
                         BV
                     @elseif($invoice->tipoDoc == '01')
                         FT
@@ -49,28 +49,28 @@
                 <td>{{ $invoice->client['numDoc'] ?? 'S/D' }}</td>
                 <td>{{ $invoice->client['rznSocial'] ?? 'S/D' }}</td>
                 <td>
-                    @if($invoice->voided)
+                    @if ($invoice->voided)
                         Anulado
-                    @elseif($invoice->sunatResponse['success'] ?? false)
+                    @elseif (($invoice->sunatResponse['cdrResponse']['code'] ?? -1) == 0)
                         Aprobado
                     @else
                         Rechazado
                     @endif
                 </td>
-                <td>{{ $invoice->tipoMoneda}}</td>
-                <td>{{ $invoice->tipo_cambio  }}</td>
+                <td>{{ $invoice->tipoMoneda }}</td>
+                <td>{{ $invoice->tipo_cambio }}</td>
                 <td>
                     020103</td>
-                    <td>{{ $invoice->mtoOperGravadas ?? 'S/D' }}</td>
+                <td>{{ $invoice->mtoOperGravadas ?? 'S/D' }}</td>
 
-                    <td>{{ isset($invoice->mtoIGV) ? number_format($invoice->mtoIGV, 2) : 'S/D' }}</td>
-                    <td>{{ isset($invoice->mtoOperInafectas) ? number_format($invoice->mtoOperInafectas, 2) : 'S/D' }}</td>
-                    <td>{{ isset($invoice->mtoImpVenta) ? number_format($invoice->mtoImpVenta, 2) : 'S/D' }}</td>
-                    <td></td>
+                <td>{{ isset($invoice->mtoIGV) ? number_format($invoice->mtoIGV, 2) : 'S/D' }}</td>
+                <td>{{ isset($invoice->mtoOperInafectas) ? number_format($invoice->mtoOperInafectas, 2) : 'S/D' }}</td>
+                <td>{{ isset($invoice->mtoImpVenta) ? number_format($invoice->mtoImpVenta, 2) : 'S/D' }}</td>
                 <td></td>
-               <td></td>
-               <td>{{ explode('-', $invoice->numDocfectado)[0] }}</td>
-               <td>{{ explode('-', $invoice->numDocfectado)[1] ?? '' }}</td>
+                <td></td>
+                <td></td>
+                <td>{{ explode('-', $invoice->numDocfectado)[0] }}</td>
+                <td>{{ explode('-', $invoice->numDocfectado)[1] ?? '' }}</td>
 
 
             </tr>
